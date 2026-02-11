@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import mongoose from "mongoose";
 import Groq from "groq-sdk";
 import axios from "axios";
 
@@ -12,16 +13,64 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+/* =========================
+   MONGODB CONNECTION
+   ========================= */
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch(err => console.log("❌ MongoDB Error:", err));
+
+/* =========================
+   SCHEMAS
+   ========================= */
+const chatSchema = new mongoose.Schema({
+  sessionId: String,
+  messages: [
+    {
+      role: String,
+      content: String
+    }
+  ]
+});
+
+const leadSchema = new mongoose.Schema({
+  sessionId: String,
+  message: String,
+  createdAt: { type: Date, default: Date.now }
+});
+
+const analyticsSchema = new mongoose.Schema({
+  sessionId: String,
+  messageCount: { type: Number, default: 0 },
+  lastActive: Date
+});
+
+/* =========================
+   MODELS
+   ========================= */
+const Chat = mongoose.model("Chat", chatSchema);
+const Lead = mongoose.model("Lead", leadSchema);
+const Analytics = mongoose.model("Analytics", analyticsSchema);
+
+/* =========================
+   GROQ SETUP
+   ========================= */
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY
 });
 
 console.log("GROQ KEY EXISTS:", !!process.env.GROQ_API_KEY);
 
+/* =========================
+   ROOT ROUTE
+   ========================= */
 app.get("/", (req, res) => {
   res.send("FREE AI Backend running 🚀");
 });
 
+/* =========================
+   CHAT ROUTE
+   ========================= */
 app.post("/chat", async (req, res) => {
   try {
     const { message, sessionId } = req.body;
@@ -30,7 +79,10 @@ app.post("/chat", async (req, res) => {
       return res.json({ reply: "Message missing" });
     }
 
-    // 🔥 Find or create chat session
+    if (!sessionId) {
+      return res.json({ reply: "Session missing" });
+    }
+
     let chat = await Chat.findOne({ sessionId });
 
     if (!chat) {
@@ -40,13 +92,11 @@ app.post("/chat", async (req, res) => {
       });
     }
 
-    // Add user message to memory
     chat.messages.push({
       role: "user",
       content: message
     });
 
-    // 🔥 AI WITH FULL MEMORY
     const completion = await groq.chat.completions.create({
       model: "llama-3.1-8b-instant",
       messages: [
@@ -65,10 +115,9 @@ Tone: professional, friendly.
     });
 
     const aiReply =
-      completion.choices?.[0]?.message?.content ||
-      "AI did not respond";
+      completion?.choices?.[0]?.message?.content ||
+      "Hello 👋 How can we help you?";
 
-    // Add AI reply to memory
     chat.messages.push({
       role: "assistant",
       content: aiReply
@@ -76,7 +125,6 @@ Tone: professional, friendly.
 
     await chat.save();
 
-    // 🔥 Analytics Update
     await Analytics.findOneAndUpdate(
       { sessionId },
       {
@@ -86,7 +134,6 @@ Tone: professional, friendly.
       { upsert: true }
     );
 
-    // 🔥 Lead Detection
     if (
       message.toLowerCase().includes("price") ||
       message.toLowerCase().includes("cost") ||
@@ -101,15 +148,14 @@ Tone: professional, friendly.
     res.json({ reply: aiReply });
 
   } catch (err) {
-    console.error("❌ ERROR:", err.message);
+    console.error("❌ FULL ERROR:", err);
     res.json({ reply: "AI error" });
   }
 });
 
-// ===============================
-// WHATSAPP WEBHOOK VERIFICATION
-// ===============================
-
+/* ===============================
+   WHATSAPP WEBHOOK VERIFY
+=============================== */
 app.get("/webhook", (req, res) => {
   const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
@@ -125,11 +171,9 @@ app.get("/webhook", (req, res) => {
   }
 });
 
-
-// ===============================
-// RECEIVE WHATSAPP MESSAGES
-// ===============================
-
+/* ===============================
+   RECEIVE WHATSAPP MESSAGE
+=============================== */
 app.post("/webhook", async (req, res) => {
   try {
     const body = req.body;
@@ -144,15 +188,14 @@ app.post("/webhook", async (req, res) => {
 
         console.log("📩 WhatsApp User:", userText);
 
-        // 🔥 Use YOUR EXISTING GROQ AI
         const completion = await groq.chat.completions.create({
           model: "llama-3.1-8b-instant",
           messages: [
             {
               role: "system",
               content: `
-You are SMS AI, the official assistant of SMS Digital Solutions.
-Do not share pricing in chat.
+You are SMS AI, official assistant of SMS Digital Solutions.
+Do not share pricing.
 If asked about price, redirect to WhatsApp or Email.
 Tone: friendly + light Telugu mix.
 `
@@ -166,10 +209,9 @@ Tone: friendly + light Telugu mix.
         });
 
         const aiReply =
-          completion.choices?.[0]?.message?.content ||
+          completion?.choices?.[0]?.message?.content ||
           "Hello 👋 How can we help you?";
 
-        // 🔥 SEND REPLY BACK TO WHATSAPP
         await axios.post(
           `https://graph.facebook.com/v18.0/${process.env.PHONE_NUMBER_ID}/messages`,
           {
@@ -190,11 +232,14 @@ Tone: friendly + light Telugu mix.
       res.sendStatus(200);
     }
   } catch (err) {
-    console.error("❌ WhatsApp Error:", err.response?.data || err.message);
+    console.error("❌ WhatsApp FULL ERROR:", err.response?.data || err);
     res.sendStatus(500);
   }
 });
 
+/* =========================
+   START SERVER
+   ========================= */
 app.listen(PORT, () => {
   console.log(`✅ FREE AI running at http://localhost:${PORT}`);
 });
