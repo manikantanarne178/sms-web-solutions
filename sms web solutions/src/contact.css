@@ -1,0 +1,135 @@
+/* =========================
+   CONTACT SECTION
+========================= */
+
+.contact {
+  padding: 100px 20px;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+}
+
+.contact-box {
+  max-width: 650px;
+  width: 100%;
+  padding: 50px 30px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.contact-box h2 {
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+}
+
+.contact-box p {
+  font-size: 1.05rem;
+  color: #cbd5f5;
+  margin-bottom: 32px;
+}
+
+/* ACTION BUTTONS */
+
+.contact-actions {
+  display: flex;
+  gap: 18px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 14px 30px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  min-width: 180px;
+  text-align: center;
+}
+
+/* WhatsApp */
+.btn.whatsapp {
+  background: #22c55e;
+  color: #022c22;
+}
+
+.btn.whatsapp:hover {
+  background: #16a34a;
+  transform: translateY(-3px);
+}
+
+/* Email */
+.btn.email {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.btn.email:hover {
+  background: #2563eb;
+  transform: translateY(-3px);
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+/* Tablet & Mobile */
+@media (max-width: 768px) {
+
+  .contact {
+    padding: 70px 18px;
+  }
+
+  .contact-box {
+    padding: 32px 22px;
+    border-radius: 16px;
+  }
+
+  .contact-box h2 {
+    font-size: 1.7rem;
+  }
+
+  .contact-box p {
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+  }
+
+  .contact-actions {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .btn {
+    width: 100%;
+    min-width: unset;
+    padding: 12px;
+  }
+
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+
+  .contact {
+    padding: 60px 15px;
+  }
+
+  .contact-box h2 {
+    font-size: 1.5rem;
+  }
+
+}
+
+
+/* Disable hover lift on touch devices */
+@media (hover: none) {
+  .btn:hover {
+    transform: none;
+  }
+}
+  

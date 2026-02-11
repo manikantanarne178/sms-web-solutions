@@ -1,0 +1,40 @@
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+  padding: 22px 20px;
+  text-align: center;
+  background: #020617;
+  color: #94a3b8;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 480px) {
+
+  .footer {
+    padding: 18px 14px;
+    font-size: 13px;
+  }
+
+}
+
+
+/* =========================
+   LARGE SCREENS (Optional)
+========================= */
+
+@media (min-width: 1400px) {
+
+  .footer {
+    padding: 28px;
+    font-size: 15px;
+  }
+
+}

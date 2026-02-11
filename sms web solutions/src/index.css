@@ -1,0 +1,47 @@
+/* =========================
+   GLOBAL RESET
+========================= */
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+/* Prevent blue tap highlight on mobile */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Make media responsive by default */
+img,
+video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+
+/* =========================
+   SMALL MOBILE TWEAK
+========================= */
+
+@media (max-width: 480px) {
+
+  html {
+    font-size: 14px;
+  }
+
+}

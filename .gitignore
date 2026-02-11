@@ -1,0 +1,15 @@
+# dependencies
+node_modules/
+sms web solutions/node_modules/
+backend/node_modules/
+
+# env files
+.env
+backend/.env
+
+# build
+dist/
+sms web solutions/dist/
+
+# logs
+*.log

@@ -1,0 +1,272 @@
+/* =========================
+   DEMOS SECTION
+========================= */
+
+.demos-section {
+  background: radial-gradient(circle at top, #eef2ff, #ffffff 60%);
+}
+
+
+/* =========================
+   DEMO CARD
+========================= */
+
+.demo-card {
+  border-radius: 22px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  transition: all 0.35s ease;
+}
+
+.demo-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 16px;
+  transition: transform 0.5s ease;
+}
+
+.demo-card:hover img {
+  transform: scale(1.08);
+}
+
+
+/* =========================
+   DEVICE FRAME
+========================= */
+
+.device-frame {
+  position: relative;
+  height: 230px;
+  margin-bottom: 14px;
+}
+
+/* Laptop */
+.laptop-frame {
+  height: 200px;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #0f172a;
+  padding: 6px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.25);
+}
+
+.laptop-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* Phone */
+.phone-frame {
+  position: absolute;
+  bottom: -16px;
+  right: 18px;
+  width: 72px;
+  height: 140px;
+  border-radius: 20px;
+  background: #000;
+  padding: 4px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+  transform: rotate(-6deg);
+}
+
+.phone-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+
+/* =========================
+   BADGES
+========================= */
+
+.device-frame .demo-badge,
+.device-frame .recommend-badge {
+  position: absolute;
+  top: 12px;
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  z-index: 5;
+}
+
+.device-frame .demo-badge {
+  left: 14px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+}
+
+.device-frame .recommend-badge {
+  right: 14px;
+  background: linear-gradient(135deg, #facc15, #eab308);
+  color: #000;
+}
+
+
+/* =========================
+   DEMO BUTTON
+========================= */
+
+.demo-btn {
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px 0;
+  border-radius: 14px;
+  border: none;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.demo-btn:hover {
+  box-shadow: 0 18px 40px rgba(37, 99, 235, 0.35);
+}
+
+
+/* =========================
+   MODAL
+========================= */
+
+.demo-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.demo-modal {
+  width: 92%;
+  max-width: 1100px;
+  height: 80vh;
+  background: #ffffff;
+  border-radius: 22px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.demo-modal h3 {
+  margin-bottom: 12px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.demo-modal iframe {
+  flex: 1;
+  width: 100%;
+  border-radius: 14px;
+  border: none;
+}
+
+.modal-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.demo-cta {
+  padding: 12px 26px;
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: #fff;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+/* Tablet & Mobile */
+@media (max-width: 768px) {
+
+  .device-frame {
+    height: 200px;
+  }
+
+  .laptop-frame {
+    height: 170px;
+  }
+
+  .phone-frame {
+    width: 60px;
+    height: 120px;
+    bottom: -12px;
+  }
+
+  .demo-modal {
+    width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .demo-cta {
+    width: 100%;
+    text-align: center;
+  }
+
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+
+  .device-frame {
+    height: 180px;
+  }
+
+  .laptop-frame {
+    height: 150px;
+  }
+
+  .phone-frame {
+    width: 55px;
+    height: 110px;
+  }
+
+}
+
+/* Disable hover on touch devices */
+@media (hover: none) {
+  .demo-card:hover img {
+    transform: none;
+  }
+
+  .demo-btn:hover {
+    box-shadow: none;
+  }
+}
+
+/* Short height screens */
+@media (max-height: 600px) {
+  .demo-modal {
+    height: 95vh;
+  }
+}

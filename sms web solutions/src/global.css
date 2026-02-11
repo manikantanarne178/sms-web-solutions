@@ -1,0 +1,137 @@
+/* =========================
+   GLOBAL
+========================= */
+
+body {
+  font-family: "Inter", Arial, sans-serif;
+  color: #0f172a;
+  background: #ffffff;
+  overflow-x: hidden;
+}
+
+/* Sections */
+.section {
+  padding: 80px 20px;
+}
+
+/* Navbar offset */
+section {
+  scroll-margin-top: 90px;
+}
+
+/* Titles */
+.section-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+/* Grid */
+.grid {
+  max-width: 1100px;
+  margin: 50px auto 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+
+/* Card */
+.card {
+  padding: 36px;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  border-radius: 18px;
+  text-align: center;
+  font-weight: 600;
+  min-height: 180px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 50px rgba(37, 99, 235, 0.25);
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+/* Tablet & Mobile */
+@media (max-width: 768px) {
+
+  .section {
+    padding: 60px 18px;
+  }
+
+  .section-title {
+    font-size: 28px;
+  }
+
+  .grid {
+    margin-top: 30px;
+    gap: 18px;
+  }
+
+  .card {
+    padding: 26px;
+    min-height: 150px;
+  }
+
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+
+  .section {
+    padding: 50px 16px;
+  }
+
+  .section-title {
+    font-size: 24px;
+  }
+
+  .card {
+    padding: 22px;
+    font-size: 14px;
+  }
+
+}
+
+/* Large Screens */
+@media (min-width: 1400px) {
+
+  .section {
+    padding: 100px 20px;
+  }
+
+  .section-title {
+    font-size: 40px;
+  }
+
+  .grid {
+    max-width: 1300px;
+    gap: 28px;
+  }
+
+  .card {
+    padding: 42px;
+    min-height: 200px;
+  }
+
+}
+
+/* Disable hover effects on touch devices */
+@media (hover: none) {
+  .card:hover {
+    transform: none;
+  }
+}

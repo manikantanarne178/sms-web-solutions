@@ -1,0 +1,189 @@
+/* =========================
+   INTRO LOADER
+========================= */
+
+.intro {
+  position: fixed;
+  inset: 0;
+  background: #020617;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+
+/* =========================
+   FRAGMENTS
+========================= */
+
+.fragments {
+  position: absolute;
+  inset: 0;
+}
+
+.fragment {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #22c55e);
+  animation: converge 4s ease forwards;
+}
+
+/* Entry positions */
+.f1 { top: -10%; left: 50%; }
+.f2 { bottom: -10%; left: 50%; }
+.f3 { left: -10%; top: 50%; }
+.f4 { right: -10%; top: 50%; }
+.f5 { top: -10%; left: -10%; }
+.f6 { top: -10%; right: -10%; }
+.f7 { bottom: -10%; left: -10%; }
+.f8 { bottom: -10%; right: -10%; }
+
+@keyframes converge {
+  to {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.3);
+    opacity: 0;
+  }
+}
+
+
+/* =========================
+   LOGO
+========================= */
+
+.intro .logo {
+  height: 180px;
+  opacity: 0;
+  animation: logoReveal 1.2s ease forwards;
+}
+
+@keyframes logoReveal {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* =========================
+   TITLE (Scoped)
+========================= */
+
+.intro h1 {
+  margin-top: 24px;
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-align: center;
+
+  background: linear-gradient(135deg, #2563eb, #22c55e);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  opacity: 0;
+  animation: textFade 1.4s ease forwards;
+  animation-delay: 0.4s;
+}
+
+@keyframes textFade {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================
+   EXIT
+========================= */
+
+.intro.exit {
+  animation: fadeOut 1s ease forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+
+/* =========================
+   SKIP BUTTON
+========================= */
+
+.skip-btn {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+
+  .intro .logo {
+    height: 130px;
+  }
+
+  .intro h1 {
+    font-size: 26px;
+    padding: 0 20px;
+  }
+
+  .fragment {
+    width: 6px;
+    height: 6px;
+    animation-duration: 3s;
+  }
+
+}
+
+/* Small Mobile */
+@media (max-width: 480px) {
+
+  .intro .logo {
+    height: 100px;
+  }
+
+  .intro h1 {
+    font-size: 22px;
+    letter-spacing: 0.5px;
+  }
+
+  /* Reduce fragment count for performance */
+  .fragment:nth-child(n+5) {
+    display: none;
+  }
+
+}
+
+
+/* Disable heavy animation on very low devices */
+@media (hover: none) {
+  .fragment {
+    animation-duration: 2.5s;
+  }
+}
