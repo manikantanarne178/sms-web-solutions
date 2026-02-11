@@ -15,18 +15,19 @@ app.use(express.json());
 
 /* =========================
    MONGODB CONNECTION
-   ========================= */
+========================= */
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.log("❌ MongoDB Error:", err));
 
 /* =========================
    SCHEMAS
-   ========================= */
+========================= */
 const chatSchema = new mongoose.Schema({
   sessionId: String,
   messages: [
     {
+      _id: false, // 🔥 prevents _id in subdocuments
       role: String,
       content: String
     }
@@ -47,14 +48,14 @@ const analyticsSchema = new mongoose.Schema({
 
 /* =========================
    MODELS
-   ========================= */
+========================= */
 const Chat = mongoose.model("Chat", chatSchema);
 const Lead = mongoose.model("Lead", leadSchema);
 const Analytics = mongoose.model("Analytics", analyticsSchema);
 
 /* =========================
    GROQ SETUP
-   ========================= */
+========================= */
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY
 });
@@ -63,14 +64,14 @@ console.log("GROQ KEY EXISTS:", !!process.env.GROQ_API_KEY);
 
 /* =========================
    ROOT ROUTE
-   ========================= */
+========================= */
 app.get("/", (req, res) => {
   res.send("FREE AI Backend running 🚀");
 });
 
 /* =========================
    CHAT ROUTE
-   ========================= */
+========================= */
 app.post("/chat", async (req, res) => {
   try {
     const { message, sessionId } = req.body;
@@ -92,10 +93,17 @@ app.post("/chat", async (req, res) => {
       });
     }
 
+    // Save user message
     chat.messages.push({
       role: "user",
       content: message
     });
+
+    /* 🔥 SANITIZE MESSAGES BEFORE SENDING TO GROQ */
+    const cleanMessages = chat.messages.map(m => ({
+      role: m.role === "assistant" ? "assistant" : "user",
+      content: String(m.content)
+    }));
 
     const completion = await groq.chat.completions.create({
       model: "llama-3.1-8b-instant",
@@ -109,11 +117,7 @@ If user asks price, politely redirect to WhatsApp.
 Tone: professional, friendly.
 `
         },
-        ...chat.messages.map(m => ({
-  role: m.role,
-  content: m.content
-}))
-
+        ...cleanMessages
       ],
       temperature: 0.7
     });
@@ -122,6 +126,7 @@ Tone: professional, friendly.
       completion?.choices?.[0]?.message?.content ||
       "Hello 👋 How can we help you?";
 
+    // Save assistant reply
     chat.messages.push({
       role: "assistant",
       content: aiReply
@@ -129,6 +134,7 @@ Tone: professional, friendly.
 
     await chat.save();
 
+    // Update analytics
     await Analytics.findOneAndUpdate(
       { sessionId },
       {
@@ -138,6 +144,7 @@ Tone: professional, friendly.
       { upsert: true }
     );
 
+    // Save lead if price-related
     if (
       message.toLowerCase().includes("price") ||
       message.toLowerCase().includes("cost") ||
@@ -152,7 +159,7 @@ Tone: professional, friendly.
     res.json({ reply: aiReply });
 
   } catch (err) {
-    console.error("❌ FULL ERROR:", err);
+    console.error("❌ FULL ERROR:", err.response?.data || err);
     res.json({ reply: "AI error" });
   }
 });
@@ -243,7 +250,7 @@ Tone: friendly + light Telugu mix.
 
 /* =========================
    START SERVER
-   ========================= */
+========================= */
 app.listen(PORT, () => {
-  console.log(`✅ FREE AI running at http://localhost:${PORT}`);
+  console.log(`✅ FREE AI running at port ${PORT}`);
 });
