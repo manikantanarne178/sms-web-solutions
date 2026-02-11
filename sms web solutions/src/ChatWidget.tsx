@@ -6,7 +6,8 @@ type Message = {
   text: string;
 };
 
-const API_URL = "http://localhost:5000/chat";
+const API_URL = "https://sms-web-solutions.onrender.com/chat";
+
 const WHATSAPP_LINK = "https://wa.me/91XXXXXXXXXX"; // replace number
 const EMAIL = "contact@smsdigital.com"; // replace email
 
