@@ -109,7 +109,11 @@ If user asks price, politely redirect to WhatsApp.
 Tone: professional, friendly.
 `
         },
-        ...chat.messages
+        ...chat.messages.map(m => ({
+  role: m.role,
+  content: m.content
+}))
+
       ],
       temperature: 0.7
     });
