@@ -32,21 +32,19 @@
 
 .chat-box {
   position: fixed;
-  bottom: 95px;
-  right: 22px;
-
+  bottom: 90px;
+  right: 20px;
   width: 360px;
-  max-height: 520px;      /* 🔥 use max-height instead */
-  
+  height: 420px;   /* 🔥 FIXED HEIGHT */
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.18);
   display: flex;
   flex-direction: column;
-
-  background: #ffffff;
-  border-radius: 20px;
-  box-shadow: 0 40px 80px rgba(0,0,0,0.25);
-  overflow: hidden;
-  z-index: 1000;
+  overflow: hidden; /* prevent expansion */
+  z-index: 999;
 }
+
 
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(15px); }
@@ -86,11 +84,14 @@
 ========================= */
 
 .chat-messages {
-  flex: 1;                 /* 🔥 Important */
-  overflow-y: auto;        /* Only this scrolls */
+  flex: 1;
   padding: 16px;
-  background: #f1f5f9;
+  overflow-y: auto;   /* 🔥 THIS IS THE KEY */
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
+
 
 .msg {
   margin-bottom: 12px;
@@ -197,13 +198,19 @@
 
 @media (max-width: 768px) {
 
+@media (max-width: 768px) {
+
   .chat-box {
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100dvh;
-    border-radius: 0;
+    right: 10px;
+    bottom: 90px;
+    width: 95%;
+    max-width: 360px;
+    height: 320px;   /* 🔥 change only this */
+    border-radius: 18px;
   }
+
+}
+
 
   .chat-bubble {
     bottom: 18px;

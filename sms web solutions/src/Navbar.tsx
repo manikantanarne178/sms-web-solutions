@@ -63,20 +63,28 @@ const Navbar = () => {
               Contact
             </button>
 
-            {contactOpen && (
-              <div className="contact-dropdown">
-                <a
-                  href="https://wa.me/918074407557"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  💬 WhatsApp
-                </a>
-                <a href="mailto:smswebsolutions@gmail.com">
-                  ✉️ Email
-                </a>
-              </div>
-            )}
+{contactOpen && (
+  <div className="contact-dropdown">
+    <a
+      href="https://wa.me/918074407557"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <span className="contact-icon whatsapp">W</span>
+      WhatsApp
+    </a>
+
+    <a
+      href="mailto:smswebsolutions@gmail.com"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <span className="contact-icon email">@</span>
+      Email
+    </a>
+  </div>
+)}
+
           </div>
 
         </div>

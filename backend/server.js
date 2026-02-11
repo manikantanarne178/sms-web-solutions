@@ -24,64 +24,88 @@ app.get("/", (req, res) => {
 
 app.post("/chat", async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, sessionId } = req.body;
 
     if (!message) {
       return res.json({ reply: "Message missing" });
     }
 
-    const completion = await groq.chat.completions.create({
-     model: "llama-3.1-8b-instant",
+    // 🔥 Find or create chat session
+    let chat = await Chat.findOne({ sessionId });
 
+    if (!chat) {
+      chat = new Chat({
+        sessionId,
+        messages: []
+      });
+    }
+
+    // Add user message to memory
+    chat.messages.push({
+      role: "user",
+      content: message
+    });
+
+    // 🔥 AI WITH FULL MEMORY
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.1-8b-instant",
       messages: [
         {
           role: "system",
-  content: `
-You are SMS AI, the official assistant of SMS Digital Solutions.
-
-Company details:
-- Company Name: SMS Digital Solutions
-- We build professional websites and digital solutions for businesses and individuals.
-- Services include:
-  • Business websites
-  • Landing pages
-  • Portfolio websites
-  • E-commerce websites
-  • Custom web applications
-- Our goal is to help businesses grow online with modern, fast, and affordable solutions.
-- We do NOT share pricing in chat.
-- If user asks about cost or price, politely redirect them to WhatsApp or Email.
-- Tone: friendly, professional, simple English with light Telugu mix.
-
-When user asks "tell me about your company" or similar,
-you MUST explain SMS Digital Solutions clearly.
+          content: `
+You are SMS AI, official assistant of SMS Digital Solutions.
+Do not share pricing.
+If user asks price, politely redirect to WhatsApp.
+Tone: professional, friendly.
 `
-
         },
-        {
-          role: "user",
-          content: String(message)
-        }
+        ...chat.messages
       ],
       temperature: 0.7
     });
 
-    res.json({
-      reply:
-        completion.choices?.[0]?.message?.content ||
-        "AI did not respond"
+    const aiReply =
+      completion.choices?.[0]?.message?.content ||
+      "AI did not respond";
+
+    // Add AI reply to memory
+    chat.messages.push({
+      role: "assistant",
+      content: aiReply
     });
-  } catch (err) {
-    console.error(
-      "❌ GROQ FULL ERROR:",
-      err?.response?.data || err?.message || err
+
+    await chat.save();
+
+    // 🔥 Analytics Update
+    await Analytics.findOneAndUpdate(
+      { sessionId },
+      {
+        $inc: { messageCount: 1 },
+        lastActive: new Date()
+      },
+      { upsert: true }
     );
 
-    res.json({
-      reply: "⚠️ AI error (Groq backend)"
-    });
+    // 🔥 Lead Detection
+    if (
+      message.toLowerCase().includes("price") ||
+      message.toLowerCase().includes("cost") ||
+      message.toLowerCase().includes("website")
+    ) {
+      await Lead.create({
+        sessionId,
+        message
+      });
+    }
+
+    res.json({ reply: aiReply });
+
+  } catch (err) {
+    console.error("❌ ERROR:", err.message);
+    res.json({ reply: "AI error" });
   }
 });
+
 // ===============================
 // WHATSAPP WEBHOOK VERIFICATION
 // ===============================

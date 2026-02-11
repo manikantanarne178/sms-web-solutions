@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+
 import "./chat.css";
 
 type Message = {
@@ -6,127 +7,172 @@ type Message = {
   text: string;
 };
 
-const API_URL = "https://sms-web-solutions.onrender.com/chat";
+type Language = "en" | "te" | "hi" | "ta" | "kn" | "ml";
 
-const WHATSAPP_LINK = "https://wa.me/91XXXXXXXXXX"; // replace number
-const EMAIL = "contact@smsdigital.com"; // replace email
+const API_URL = "https://sms-web-solutions.onrender.com/chat";
+const WHATSAPP_LINK = "https://wa.me/918074407557";
+const EMAIL = "smswebsolutions3@gmail.com";
+
+/* =========================
+   SESSION ID (AI MEMORY)
+   ========================= */
+const getSessionId = () => {
+  let id = localStorage.getItem("sms_session");
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem("sms_session", id);
+  }
+  return id;
+};
+
+const sessionId = getSessionId();
 
 const ChatWidget = () => {
   const [open, setOpen] = useState(false);
+  const [language, setLanguage] = useState<Language>("en");
+  
   const [messages, setMessages] = useState<Message[]>([
     {
       from: "bot",
-      text:
-        "Hi 👋 I’m SMS AI.\n" +
-        "Nenu meeku mana services gurinchi clarity ivvadaniki vachanu 😊\n" +
-        "How can I help you today?"
+      text: "Hi 👋 I’m SMS AI.\nHow can I help you today?"
     }
   ]);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+
+useEffect(() => {
+  messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+}, [messages]);
+
   const [input, setInput] = useState("");
   const [typing, setTyping] = useState(false);
 
   /* =========================
-     LOCAL FALLBACK LOGIC
+     SMART LANGUAGE DETECTION
      ========================= */
-  const getBotReply = (text: string): string => {
+  const detectLanguage = (text: string): Language => {
     const msg = text.toLowerCase();
 
-    if (msg.includes("about") || msg.includes("company") || msg.includes("tell")) {
-      return (
-        "🏢 **SMS Digital Solutions**\n\n" +
-        "We help businesses grow online 🌐\n" +
-        "• Websites\n• Landing Pages\n• Portfolios\n• E-commerce\n• Custom Web Apps\n\n" +
-        "Nenu awareness kosam matrame 😊\n" +
-        "Detailed discussion kosam WhatsApp / Email lo contact cheyandi."
-      );
-    }
-
-    if (msg.includes("service")) {
-      return (
-        "🚀 Mana services:\n\n" +
-        "• Business Websites\n" +
-        "• Startup Landing Pages\n" +
-        "• Personal Portfolios\n" +
-        "• Online Stores\n\n" +
-        "Meeru em plan chestunnaru? 😊"
-      );
-    }
+    if (/[\u0C00-\u0C7F]/.test(text)) return "te";
+    if (/[\u0900-\u097F]/.test(text)) return "hi";
+    if (/[\u0B80-\u0BFF]/.test(text)) return "ta";
+    if (/[\u0C80-\u0CFF]/.test(text)) return "kn";
+    if (/[\u0D00-\u0D7F]/.test(text)) return "ml";
 
     if (
-      msg.includes("price") ||
-      msg.includes("cost") ||
-      msg.includes("budget")
+      msg.includes("meeru") ||
+      msg.includes("naku") ||
+      msg.includes("kavali") ||
+      msg.includes("undi")
+    )
+      return "te";
+
+    if (
+      msg.includes("mujhe") ||
+      msg.includes("chahiye") ||
+      msg.includes("kaise") ||
+      msg.includes("hai")
+    )
+      return "hi";
+
+    if (
+      msg.includes("unga") ||
+      msg.includes("venum") ||
+      msg.includes("irukku")
+    )
+      return "ta";
+
+    if (
+      msg.includes("beku") ||
+      msg.includes("ide") ||
+      msg.includes("nimma")
+    )
+      return "kn";
+
+    if (
+      msg.includes("venam") ||
+      msg.includes("undu") ||
+      msg.includes("njan")
+    )
+      return "ml";
+
+    return "en";
+  };
+
+  /* =========================
+     SEND MESSAGE
+     ========================= */
+const sendMessage = async (customText?: string) => {
+  const text = customText ?? input;
+  if (!text.trim()) return;
+
+  const detectedLang = detectLanguage(text);
+  setLanguage(detectedLang);
+
+  const userMessage: Message = { from: "user", text };
+
+  const updatedMessages: Message[] = [...messages, userMessage];
+  setMessages(updatedMessages);
+
+  setInput("");
+  setTyping(true);
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message: text,
+        language: detectedLang,
+        sessionId
+      })
+    });
+
+    if (!res.ok) throw new Error("Backend error");
+
+    const data = await res.json();
+
+    const botMessage: Message = {
+      from: "bot",
+      text: String(data.reply)
+    };
+
+    const newMessages: Message[] = [...updatedMessages, botMessage];
+    setMessages(newMessages);
+
+    // 🔥 WhatsApp redirect logic
+    const lower = text.toLowerCase();
+
+    if (
+      lower.includes("price") ||
+      lower.includes("cost") ||
+      lower.includes("quotation") ||
+      lower.includes("contact")
     ) {
-      return (
-        "💰 Pricing project requirements batti change avtundi.\n\n" +
-        "Exact cost telusukovalante WhatsApp lo matladadam best 📱"
-      );
+      setTimeout(() => {
+        window.open(WHATSAPP_LINK, "_blank");
+      }, 2000);
     }
 
-    if (msg.includes("contact")) {
-      return (
-        "📞 Contact cheyandi:\n\n" +
-        "WhatsApp or Email lo easy ga reach avvachu 😊\n" +
-        `📧 ${EMAIL}`
-      );
+    if (newMessages.length >= 8) {
+      setTimeout(() => {
+        window.open(WHATSAPP_LINK, "_blank");
+      }, 3000);
     }
 
-    return (
-      "😊 Mee message ardham ayyindi.\n" +
-      "Nenu basic clarity ivvagalanu.\n" +
-      "Detailed discussion kosam WhatsApp lo matladadam better 👍"
-    );
-  };
+  } catch {
+    const errorMessage: Message = {
+      from: "bot",
+      text:
+        "Sorry, something went wrong. Please contact us on WhatsApp."
+    };
 
-  /* =========================
-     SEND MESSAGE (FINAL)
-     ========================= */
-  const sendMessage = async (customText?: string) => {
-    const text = customText ?? input;
-    if (!text.trim()) return;
+    setMessages(prev => [...prev, errorMessage]);
+  }
 
-    setMessages(prev => [...prev, { from: "user", text }]);
-    setInput("");
-    setTyping(true);
+  setTyping(false);
+};
 
-    try {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text })
-      });
 
-      if (!res.ok) throw new Error("Backend error");
-
-      const data = await res.json();
-
-      setMessages(prev => [
-        ...prev,
-        {
-          from: "bot",
-          text:
-            typeof data.reply === "string"
-              ? data.reply
-              : getBotReply(text)
-        }
-      ]);
-    } catch {
-      // 🔥 graceful fallback (NO scary error)
-      setMessages(prev => [
-        ...prev,
-        {
-          from: "bot",
-          text: getBotReply(text)
-        }
-      ]);
-    }
-
-    setTyping(false);
-  };
-
-  /* =========================
-     UI
-     ========================= */
   return (
     <>
       <div className="chat-bubble" onClick={() => setOpen(!open)}>
@@ -136,7 +182,7 @@ const ChatWidget = () => {
       {open && (
         <div className="chat-box">
           <div className="chat-header">
-            Ask SMS AI
+            Ask SMS AI ({language.toUpperCase()})
             <span onClick={() => setOpen(false)}>✕</span>
           </div>
 
@@ -145,18 +191,20 @@ const ChatWidget = () => {
               <div key={i} className={`msg ${m.from}`}>
                 {m.text.split("\n").map((line, j) => (
                   <div key={j}>{line}</div>
+                  
                 ))}
+                
               </div>
             ))}
 
             {typing && (
               <div className="msg bot typing">
-                SMS AI is typing<span className="dots">...</span>
+                SMS AI is typing...
               </div>
             )}
+             <div ref={messagesEndRef} />
           </div>
 
-          {/* QUICK REPLIES */}
           <div className="quick-replies">
             <button onClick={() => sendMessage("Tell me about your company")}>
               About
@@ -170,6 +218,9 @@ const ChatWidget = () => {
             <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer">
               WhatsApp
             </a>
+            <a href={`mailto:${EMAIL}`}>
+              Email
+            </a>
           </div>
 
           <div className="chat-input">
@@ -182,6 +233,7 @@ const ChatWidget = () => {
             />
             <button onClick={() => sendMessage()}>Send</button>
           </div>
+          
         </div>
       )}
     </>

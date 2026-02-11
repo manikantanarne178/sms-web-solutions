@@ -14,6 +14,83 @@
   background: #ffffff;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
 }
+.contact-wrapper {
+  position: relative;
+}
+
+.contact-dropdown {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 12px;
+  width: 180px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: fadeIn 0.2s ease;
+  z-index: 2000;
+}
+
+.contact-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #0f172a;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.contact-dropdown a:hover {
+  background: #f1f5f9;
+}
+.contact-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.whatsapp {
+  background: #22c55e;
+}
+
+.email {
+  background: #2563eb;
+}
+@media (max-width: 768px) {
+
+  .contact-wrapper {
+    width: 100%;
+  }
+
+  .contact-dropdown {
+    position: static;       /* 🔥 key fix */
+    width: 100%;
+    box-shadow: none;
+    padding: 0;
+    margin-top: 12px;
+  }
+
+  .contact-dropdown a {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 8px;
+  }
+
+}
+
 
 /* Prevent horizontal scroll */
 html, body {

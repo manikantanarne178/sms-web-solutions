@@ -57,8 +57,14 @@ const Hero = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.3 }}
         >
-          <button className="primary">Get Your Website</button>
-          <button className="secondary">View Live Demos</button>
+<a href="#contact">
+  <button className="primary">Get Your Website</button>
+</a>
+
+<a href="#demos">
+  <button className="secondary">View Live Demos</button>
+</a>
+
         </motion.div>
 
         {/* DOTS */}
