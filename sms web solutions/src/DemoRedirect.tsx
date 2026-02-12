@@ -7,7 +7,7 @@ const DemoRedirect = () => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          window.location.href = "https://smswebsolutions.com";
+          window.location.replace("https://smsnexoradigitalsolutions.com");
           return 0;
         }
         return prev - 1;
@@ -32,8 +32,9 @@ const DemoRedirect = () => {
       }}
     >
       <h2>Live Demo Preview</h2>
+
       <p style={{ marginTop: 12, opacity: 0.85 }}>
-        Redirecting back to <strong>SMS Web Solutions</strong> in
+        Redirecting back to <strong>SMS Nexora Digital Solutions</strong> in
       </p>
 
       <div

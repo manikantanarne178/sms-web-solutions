@@ -45,9 +45,10 @@ const Intro = ({ onFinish }: IntroProps) => {
         v.name.toLowerCase().includes("samantha")
       ) || voices[0];
 
-    const msg = new SpeechSynthesisUtterance(
-      "Welcome to SMS Web Solutions. We build modern, powerful, and intelligent web experiences."
-    );
+const msg = new SpeechSynthesisUtterance(
+  "Welcome to SMS Nexora Digital Solutions. We build modern, powerful, and intelligent digital experiences."
+);
+
     msg.rate = 0.9;
     msg.pitch = 1.3;
     msg.voice = female;
@@ -74,7 +75,8 @@ const Intro = ({ onFinish }: IntroProps) => {
       <img
         src={logo}
         className="logo"
-        alt="SMS Web Solutions"
+       alt="SMS Nexora Digital Solutions"
+
         style={{
           opacity: progress,
           filter: `blur(${12 - progress * 12}px)`,
@@ -82,13 +84,10 @@ const Intro = ({ onFinish }: IntroProps) => {
         }}
       />
 
-      <h1
-        style={{
-          opacity: progress > 0.85 ? (progress - 0.85) * 6 : 0
-        }}
-      >
-        SMS Web Solutions
-      </h1>
+<h1>
+  SMS Nexora Digital Solutions
+</h1>
+
 
       <button className="skip-btn" onClick={skipIntro}>
         Skip Intro

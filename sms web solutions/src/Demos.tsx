@@ -1,6 +1,14 @@
 import "./demos.css";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+
+type DemoItem = {
+  title: string;
+  image: string;
+  demoUrl: string;
+  openType: "iframe" | "newtab";
+};
+
 const demoData: DemoItem[] = [
   {
     title: "Business Website",
@@ -25,116 +33,94 @@ const demoData: DemoItem[] = [
   },
 ];
 
-
-
-type DemoItem = {
-  title: string;
-  image: string;
-  demoUrl: string;
-  openType: "iframe" | "newtab";
-};
-
-
 const Demos = () => {
-  const [activeDemo, setActiveDemo] = useState<any>(null);
+  const [activeDemo, setActiveDemo] = useState<DemoItem | null>(null);
+
+  const openDemoWithTimer = (demo: DemoItem) => {
+    const demoWindow = window.open(demo.demoUrl, "_blank");
+
+    if (!demoWindow) return; // popup blocked safety
+
+    setTimeout(() => {
+      if (!demoWindow.closed) {
+        demoWindow.close();
+      }
+
+      // Redirect back to homepage (optional)
+      window.location.href = "/";
+    }, 30000); // 30 seconds
+  };
 
   return (
-    <section className="section demos-section" id="demos">
+    <section className="section demos-section" id="portfolio">
       <h2 className="section-title">Live Website Demos</h2>
       <p className="demo-sub">
         Premium websites crafted to convert visitors into customers
       </p>
 
-<div className="grid">
-  {demoData.map((demo, index) => (
-    <motion.div
-      key={index}
-      className="card demo-card"
-      whileHover={{ y: -14 }}
-      transition={{ type: "spring", stiffness: 180 }}
-    >
-      {/* ===== BADGES ===== */}
-      {/* <span className="demo-badge">LIVE</span>
-      {index === 0 && (
-        <span className="recommend-badge">Recommended</span>
-      )} */}
+      <div className="grid">
+        {demoData.map((demo, index) => (
+          <motion.div
+            key={index}
+            className="card demo-card"
+            whileHover={{ y: -14 }}
+            transition={{ type: "spring", stiffness: 180 }}
+          >
+            <div className="device-frame">
+              <span className="demo-badge">LIVE</span>
+              {index === 0 && (
+                <span className="recommend-badge">Recommended</span>
+              )}
 
-      {/* ===== DEVICE MOCKUP ===== */}
-<div className="device-frame">
-  <span className="demo-badge">LIVE</span>
-  {index === 0 && (
-    <span className="recommend-badge">Recommended</span>
-  )}
+              <div className="laptop-frame">
+                <img src={demo.image} alt={demo.title} />
+              </div>
 
-  <div className="laptop-frame">
-    <img src={demo.image} alt={demo.title} />
-  </div>
+              <div className="phone-frame">
+                <img src={demo.image} alt="Mobile preview" />
+              </div>
+            </div>
 
-  <div className="phone-frame">
-    <img src={demo.image} alt="Mobile preview" />
-  </div>
-</div>
+            <h3>{demo.title}</h3>
 
-
-      {/* ===== TITLE ===== */}
-      <h3>{demo.title}</h3>
-
-      {/* ===== CTA ===== */}
-<button
-  className="demo-btn"
-  onClick={() => {
-    const demoWindow = window.open(demo.demoUrl, "_blank");
-
-    setTimeout(() => {
-      if (demoWindow && !demoWindow.closed) {
-        demoWindow.close(); // optional
-      }
-      window.location.href = "/";
-    }, 30000); // 60 seconds
-  }}
->
-  View Live Demo
-</button>
-
-
-
-
-
-    </motion.div>
-  ))}
-</div>
-
-
-      {/* ===== DEMO MODAL ===== */}
-      <AnimatePresence>
-{activeDemo && (
-  <motion.div className="demo-modal-backdrop">
-    <motion.div className="demo-modal">
-      <h3>{activeDemo.title}</h3>
-
-      <iframe
-        src={activeDemo.demoUrl}
-        title="Live Demo"
-        frameBorder="0"
-        onError={() => window.open(activeDemo.demoUrl, "_blank")}
-      />
-
-      <div className="modal-actions">
-        <a href="#contact" className="demo-cta">
-          Get This Website 🚀
-        </a>
-
-        <button
-          className="close-btn"
-          onClick={() => setActiveDemo(null)}
-        >
-          Close
-        </button>
+            <button
+              className="demo-btn"
+              onClick={() => openDemoWithTimer(demo)}
+            >
+              View Live Demo
+            </button>
+          </motion.div>
+        ))}
       </div>
-    </motion.div>
-  </motion.div>
-)}
 
+      <AnimatePresence>
+        {activeDemo && (
+          <motion.div className="demo-modal-backdrop">
+            <motion.div className="demo-modal">
+              <h3>{activeDemo.title}</h3>
+
+              <iframe
+                src={activeDemo.demoUrl}
+                title="Live Demo"
+                frameBorder="0"
+                onError={() => window.open(activeDemo.demoUrl, "_blank")}
+              />
+
+              <div className="modal-actions">
+                <a href="#contact" className="demo-cta">
+                  Get This Website 🚀
+                </a>
+
+                <button
+                  className="close-btn"
+                  onClick={() => setActiveDemo(null)}
+                >
+                  Close
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
       </AnimatePresence>
     </section>
   );

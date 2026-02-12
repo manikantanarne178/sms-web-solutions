@@ -5,7 +5,7 @@
 .intro {
   position: fixed;
   inset: 0;
-  background: #020617;
+  background: radial-gradient(circle at center,#000 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,6 +13,39 @@
   z-index: 9999;
   overflow: hidden;
 }
+.intro .logo {
+  height: 200px;
+  position: relative;
+  z-index: 2;
+  animation: logoFloat 3s ease-in-out infinite alternate;
+}
+
+.intro .logo::after {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(37,99,235,0.4), transparent 70%);
+  filter: blur(40px);
+  z-index: -1;
+}
+@keyframes logoFloat {
+  from {
+    transform: translateY(-6px);
+  }
+  to {
+    transform: translateY(6px);
+  }
+}
+@keyframes logoFloat {
+  from {
+    transform: translateY(-6px);
+  }
+  to {
+    transform: translateY(6px);
+  }
+}
+
+
 
 
 /* =========================
@@ -76,20 +109,24 @@
 ========================= */
 
 .intro h1 {
-  margin-top: 24px;
-  font-size: 38px;
+  margin-top: 30px;
+  font-size: 48px;
   font-weight: 900;
-  letter-spacing: 1px;
   text-align: center;
+  letter-spacing: 2px;
 
-  background: linear-gradient(135deg, #2563eb, #22c55e);
-  background-clip: text;
+  background: linear-gradient(90deg, #2563eb, #22c55e, #2563eb);
+  background-size: 200% 200%;
+  animation: gradientShift 4s ease infinite;
+background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+}
 
-  opacity: 0;
-  animation: textFade 1.4s ease forwards;
-  animation-delay: 0.4s;
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 @keyframes textFade {

@@ -12,7 +12,8 @@ const Contact = () => {
 
         <div className="contact-actions">
           <a
-            href="https://wa.me/918074407557?text=Hi%20SMS%20Web%20Solutions%2C%20I%20am%20interested%20in%20a%20website"
+         href="https://wa.me/918074407557?text=Hi%20SMS%20Nexora%20Digital%20Solutions%2C%20I%20am%20interested%20in%20a%20website"
+
 
             target="_blank"
             rel="noopener noreferrer"
@@ -22,7 +23,7 @@ const Contact = () => {
           </a>
 
           <a
-            href="mailto:smswebsolutions@gmail.com"
+            href="mailto:smsnexoradigitalsolutions@gmail.com"
             className="btn email"
           >
             ✉️ Email Us

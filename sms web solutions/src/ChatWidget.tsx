@@ -109,9 +109,10 @@ const sendMessage = async (customText?: string) => {
   setLanguage(detectedLang);
 
   const userMessage: Message = { from: "user", text };
-  const updatedMessages = [...messages, userMessage];
 
+  const updatedMessages: Message[] = [...messages, userMessage];
   setMessages(updatedMessages);
+
   setInput("");
   setTyping(true);
 
@@ -135,24 +136,41 @@ const sendMessage = async (customText?: string) => {
       text: String(data.reply)
     };
 
-    setMessages(prev => [...prev, botMessage]);
+    const newMessages: Message[] = [...updatedMessages, botMessage];
+    setMessages(newMessages);
 
-  } catch (err) {
-    console.error(err);
+    // 🔥 WhatsApp redirect logic
+    const lower = text.toLowerCase();
 
-    setMessages(prev => [
-      ...prev,
-      {
-        from: "bot",
-        text: "Sorry, something went wrong. Please contact us on WhatsApp."
-      }
-    ]);
-  } finally {
-    // 🔥 ALWAYS runs
-    setTyping(false);
+    if (
+      lower.includes("price") ||
+      lower.includes("cost") ||
+      lower.includes("quotation") ||
+      lower.includes("contact")
+    ) {
+      setTimeout(() => {
+        window.open(WHATSAPP_LINK, "_blank");
+      }, 2000);
+    }
+
+    if (newMessages.length >= 8) {
+      setTimeout(() => {
+        window.open(WHATSAPP_LINK, "_blank");
+      }, 3000);
+    }
+
+  } catch {
+    const errorMessage: Message = {
+      from: "bot",
+      text:
+        "Sorry, something went wrong. Please contact us on WhatsApp."
+    };
+
+    setMessages(prev => [...prev, errorMessage]);
   }
-};
 
+  setTyping(false);
+};
 
 
   return (

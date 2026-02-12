@@ -1,46 +1,44 @@
 import "./navbar.css";
-import logo from "../src/assets/smslogo.png";
+import logo from "./assets/smslogo.png";
 import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  // Lock body scroll when menu is open
+  // Lock body scroll when mobile menu is open
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    document.body.style.overflow = menuOpen ? "hidden" : "auto";
   }, [menuOpen]);
 
-  // Close contact dropdown if menu closes
+  // Close contact dropdown when menu closes
   useEffect(() => {
-    if (!menuOpen) {
-      setContactOpen(false);
-    }
+    if (!menuOpen) setContactOpen(false);
   }, [menuOpen]);
+
+  // Scroll shrink effect
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <>
-      <nav className="navbar">
-        
-        {/* Logo */}
+      <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
+
+        {/* Logo Section */}
         <div className="logo-wrap">
-          <img src={logo} alt="SMS Web Solutions" />
-          <span>SMS Web Solutions</span>
+          <div className="logo-circle">
+            <img src={logo} alt="SMS Nexora Digital Solutions" />
+          </div>
+          <span>SMS Nexora</span>
         </div>
 
-        {/* Hamburger */}
-        <div 
-          className="menu-toggle"
-          onClick={() => setMenuOpen(!menuOpen)}
-        >
-          {menuOpen ? "✕" : "☰"}
-        </div>
-
-        {/* Links */}
+        {/* Desktop & Mobile Links */}
         <div className={`nav-links ${menuOpen ? "active" : ""}`}>
 
           <a href="#services" onClick={() => setMenuOpen(false)}>
@@ -51,42 +49,50 @@ const Navbar = () => {
             Industries
           </a>
 
-          <a href="#demos" onClick={() => setMenuOpen(false)}>
-            Demos
+          <a href="#portfolio" onClick={() => setMenuOpen(false)}>
+            Portfolio
           </a>
 
+          {/* Contact Dropdown */}
           <div className="contact-wrapper">
-            <button
-              className="nav-btn"
-              onClick={() => setContactOpen(!contactOpen)}
-            >
-              Contact
-            </button>
+<button
+  className="contact-btn"
+  onClick={() => setContactOpen(!contactOpen)}
+>
+  Contact
+</button>
 
-{contactOpen && (
-  <div className="contact-dropdown">
-    <a
-      href="https://wa.me/918074407557"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <span className="contact-icon whatsapp">W</span>
-      WhatsApp
-    </a>
 
-    <a
-      href="mailto:smswebsolutions@gmail.com"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <span className="contact-icon email">@</span>
-      Email
-    </a>
-  </div>
-)}
+            {contactOpen && (
+              <div className="contact-dropdown">
+                <a
+                  href="https://wa.me/918074407557"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="contact-icon whatsapp">W</span>
+                  WhatsApp
+                </a>
 
+                <a
+                  href="mailto:smsnexora@gmail.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="contact-icon email">@</span>
+                  Email
+                </a>
+              </div>
+            )}
           </div>
+        </div>
 
+        {/* Hamburger */}
+        <div
+          className="menu-toggle"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          {menuOpen ? "✕" : "☰"}
         </div>
       </nav>
 
