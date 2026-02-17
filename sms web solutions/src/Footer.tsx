@@ -2,7 +2,7 @@ import "./footer.css";
 
 const Footer = () => {
 
-  const email = "smsnexoradigitalsolutions@email.com";
+  const email = "smsnexoradigitalsolutions@gmail.com";
   const phone = "918074407557"; // remove + and - for WhatsApp link
 
   return (
