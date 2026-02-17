@@ -10,6 +10,40 @@
   align-items: center;
   color: #fff;
 }
+.register-form {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.register-form input,
+.register-form textarea {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+}
+
+.register-form textarea {
+  min-height: 100px;
+}
+
+.register-btn {
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.register-btn:hover {
+  background-color: #0056b3;
+}
+.error {
+  color: red;
+  font-size: 13px;
+  margin-top: -10px;
+  margin-bottom: 5px;
+}
 
 .contact-box {
   max-width: 650px;
