@@ -89,37 +89,62 @@ const Contact = () => {
     setErrors(newErrors);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
 
-    e.preventDefault();
+  if (Object.keys(errors).length > 0) {
+    alert("Please fix errors before submitting");
+    return;
+  }
 
-    if (Object.keys(errors).length > 0) {
-      alert("Please fix errors before submitting");
-      return;
+  if (
+    formData.name.length < 3 ||
+    !emailRegex.test(formData.email) ||
+    formData.phone.length !== 13
+  ) {
+    alert("Please enter valid details");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "https://sms-web-solutions.onrender.com/register",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          fullName: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          projectDetails: formData.message
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert("Registration successful!");
+
+      setFormData({
+        name: "",
+        email: "",
+        phone: "+91",
+        message: ""
+      });
+
+      setErrors({});
+    } else {
+      alert(data.message || "Registration failed");
     }
 
-    if (
-      formData.name.length < 3 ||
-      !emailRegex.test(formData.email) ||
-      formData.phone.length !== 13
-    ) {
-      alert("Please enter valid details");
-      return;
-    }
+  } catch (error) {
+    alert("Server error. Please try again.");
+  }
+};
 
-    console.log("Registered User:", formData);
-
-    alert("Registration successful!");
-
-    setFormData({
-      name: "",
-      email: "",
-      phone: "+91",
-      message: ""
-    });
-
-    setErrors({});
-  };
 
   return (
     <section className="contact" id="contact">
