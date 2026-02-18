@@ -57,8 +57,9 @@ const Analytics = mongoose.model("Analytics", analyticsSchema);
    GROQ SETUP
 ========================= */
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY
+  apiKey: process.env.GROQ_API_KEY?.trim()
 });
+
 
 console.log("GROQ KEY EXISTS:", !!process.env.GROQ_API_KEY);
 
