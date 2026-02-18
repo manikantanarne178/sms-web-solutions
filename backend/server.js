@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import Groq from "groq-sdk";
 import axios from "axios";
+import ExcelJS from "exceljs";
 
 dotenv.config();
 
@@ -33,6 +34,15 @@ const chatSchema = new mongoose.Schema({
     }
   ]
 });
+const registrationSchema = new mongoose.Schema({
+  fullName: String,
+  email: String,
+  phone: String,
+  projectDetails: String,
+  createdAt: { type: Date, default: Date.now }
+});
+
+const Registration = mongoose.model("Registration", registrationSchema);
 
 const leadSchema = new mongoose.Schema({
   sessionId: String,
@@ -165,6 +175,72 @@ Tone: professional, friendly.
   } catch (err) {
     console.error("❌ FULL ERROR:", err.response?.data || err);
     res.json({ reply: "AI error" });
+  }
+});
+/* =========================
+   EXPORT REGISTRATIONS
+========================= */
+app.get("/export-registrations", async (req, res) => {
+  try {
+    const registrations = await Registration.find().sort({ createdAt: -1 });
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Registrations");
+
+    worksheet.columns = [
+      { header: "Full Name", key: "fullName", width: 25 },
+      { header: "Email", key: "email", width: 30 },
+      { header: "Phone", key: "phone", width: 20 },
+      { header: "Project Details", key: "projectDetails", width: 40 },
+      { header: "Date", key: "createdAt", width: 25 }
+    ];
+
+    registrations.forEach(reg => {
+      worksheet.addRow(reg);
+    });
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=registrations.xlsx"
+    );
+
+    await workbook.xlsx.write(res);
+    res.end();
+
+  } catch (err) {
+    console.error("Export Error:", err);
+    res.status(500).json({ message: "Export failed" });
+  }
+});
+
+/* =========================
+   REGISTER ROUTE
+========================= */
+app.post("/register", async (req, res) => {
+  try {
+    const { fullName, email, phone, projectDetails } = req.body;
+
+    if (!fullName || !email || !phone) {
+      return res.status(400).json({ message: "All fields required" });
+    }
+
+    await Registration.create({
+      fullName,
+      email,
+      phone,
+      projectDetails
+    });
+
+    res.json({ message: "Registration successful" });
+
+  } catch (err) {
+    console.error("Register Error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 });
 
