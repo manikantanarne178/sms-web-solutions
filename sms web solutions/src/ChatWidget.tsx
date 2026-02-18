@@ -11,7 +11,7 @@ type Language = "en" | "te" | "hi" | "ta" | "kn" | "ml";
 
 const API_URL = "https://sms-web-solutions.onrender.com/chat";
 const WHATSAPP_LINK = "https://wa.me/918074407557";
-const EMAIL = "smswebsolutions3@gmail.com";
+const EMAIL = "smsnexoradigitalsolutions@gmail.com";
 
 /* =========================
    SESSION ID (AI MEMORY)
